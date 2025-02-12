@@ -145,7 +145,7 @@ def main():
                 new_size = (max_width, int(height * ratio))
                 img = img.resize(new_size, Resampling.LANCZOS)
             
-            st.image(img, caption=current_file.name, use_column_width=False)
+            st.image(img, caption=current_file.name, use_container_width =False)
             
             def save_image(category):
                 current_file.seek(0)
