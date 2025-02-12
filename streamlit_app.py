@@ -74,7 +74,7 @@ def main():
         st.session_state.current_index = 0
         st.session_state.sorting_complete = False
         st.session_state.processed_files = []
-        st.experimental_rerun()
+        st.rerun()
 
     # Show completion state if sorting is done
     if st.session_state.sorting_complete:
@@ -142,7 +142,7 @@ def main():
         if st.session_state.current_index >= len(st.session_state.uploaded_files):
             st.session_state.sorting_complete = True
         
-        st.experimental_rerun()
+        st.rerun()
     
     # Create buttons with custom styling
     button_style = """
