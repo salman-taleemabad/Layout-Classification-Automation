@@ -13,7 +13,7 @@ class ImageSorterState:
         
     def initialize_state(self):
         st.session_state.app_state = {
-            'sorted_images': {},  # Dictionary to store image data more efficiently
+            'sorted_images': {},
             'current_index': 0,
             'sorting_complete': False,
             'last_activity': datetime.now().isoformat()
@@ -36,7 +36,6 @@ class ImageSorterState:
         st.session_state.app_state['sorting_complete'] = value
     
     def add_sorted_image(self, filename, category, data):
-        """Store image information more efficiently"""
         if 'sorted_images' not in st.session_state.app_state:
             st.session_state.app_state['sorted_images'] = {}
         
@@ -46,11 +45,9 @@ class ImageSorterState:
         }
     
     def get_sorted_images(self):
-        """Get all sorted images"""
         return st.session_state.app_state.get('sorted_images', {})
     
     def get_category_counts(self):
-        """Get counts of images per category"""
         counts = {}
         for img_data in self.get_sorted_images().values():
             category = img_data['category']
@@ -61,17 +58,16 @@ class ImageSorterState:
         self.initialize_state()
 
 @st.cache_data
-def resize_image(img, max_width=600):
-    """Cache image resizing to improve performance"""
-    width, height = img.size
-    if width > max_width:
-        ratio = max_width / width
-        new_size = (max_width, int(height * ratio))
-        return img.resize(new_size, Resampling.LANCZOS)
-    return img
+def resize_image(_img, _max_width=600):
+    """Cache image resizing with proper parameter naming"""
+    width, height = _img.size
+    if width > _max_width:
+        ratio = _max_width / width
+        new_size = (_max_width, int(height * ratio))
+        return _img.resize(new_size, Resampling.LANCZOS)
+    return _img
 
 def create_download_zip(sorted_images):
-    """Create zip file from sorted images"""
     zip_buffer = io.BytesIO()
     
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
@@ -93,7 +89,6 @@ def main():
     
     state = ImageSorterState()
     
-    # CSS remains the same...
     st.markdown("""
         <style>
         .download-button {
@@ -118,7 +113,6 @@ def main():
         </style>
     """, unsafe_allow_html=True)
     
-    # File uploader
     uploaded_files = st.file_uploader(
         "Upload your images",
         type=['png', 'jpg', 'jpeg', 'gif'],
@@ -131,16 +125,13 @@ def main():
             st.session_state.current_files = uploaded_files
             state.reset()
         
-        # Display current progress
         total_files = len(uploaded_files)
         progress_text = f"Processing image {state.current_index + 1} of {total_files}"
         st.write(progress_text)
         
-        # Progress bar
         progress = state.current_index / total_files
         st.progress(progress)
         
-        # Display current image
         try:
             current_file = uploaded_files[state.current_index]
             img = Image.open(current_file)
@@ -164,7 +155,6 @@ def main():
                 
                 st.rerun()
             
-            # Button layout
             col1, col2, col3 = st.columns(3)
             col4, col5 = st.columns(2)
             
@@ -190,7 +180,6 @@ def main():
     else:
         st.write("Please upload some images to begin sorting.")
     
-    # Sidebar statistics
     st.sidebar.header("📊 Sorting Statistics")
     
     category_counts = state.get_category_counts()
@@ -207,7 +196,6 @@ def main():
         count = category_counts.get(category_key, 0)
         st.sidebar.write(f"{display_name}: {count} images")
     
-    # Download button
     sorted_images = state.get_sorted_images()
     if sorted_images:
         st.sidebar.markdown("---")
@@ -217,7 +205,6 @@ def main():
             unsafe_allow_html=True
         )
     
-    # Show completion message
     if state.sorting_complete:
         st.success("✨ All images have been sorted! ✨")
         if st.button("Start New Batch"):
